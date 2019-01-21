@@ -2,28 +2,39 @@ import * as React from 'react';
 import { fetchMessages, Message } from '../client';
 import { Segment, Image, Comment, Header } from 'semantic-ui-react';
 
-interface MesasgeFeedProps {
+interface MessageFeedProps {
   channelName: string;
 }
 
-interface MesasgeFeedState {
+interface MessageFeedState {
   messages: Message[];
 }
 
 export class MessageFeed extends React.Component<MessageFeedProps, MessageFeedState> {
   
-  constructor(props: MesasgeFeedProps) {
+  constructor(props: MessageFeedProps) {
     super(props);
     this.state = {
       messages: []
     };
   }
 
+  // 서버 사이드 애플리케이션에 GET 요청을 전송
+  private fetchMessages = (channelName: string) => {
+    fetchMessages(channelName)
+      .then(response => {
+        this.setState({ messages: response.data.messages });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }  
+
   public render() {
     return (
       <Comment.Group>
         <Header as='h3' dividing>{this.props.channelName}</Header>
-        {this.state.messages.sclice().reverse().map(message=>
+        {this.state.messages.slice().reverse().map(message=>
             <Comment key={message.id}>
             <Comment.Avatar src={message.user.avatar || '/img/avatar.png'} />
             <Comment.Content>
@@ -40,22 +51,14 @@ export class MessageFeed extends React.Component<MessageFeedProps, MessageFeedSt
       </Comment.Group>
     )
   }
-
-  // 서버 사이드 애플리케이션에 GET 요청을 전송
-  private fetchMessages = (channelName: string) => {
-    fetchMessages(channelName)
-      .then(response => {
-        this.setState({ messages: response.data.messages });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  public componentDidMount() {
+    this.fetchMessages(this.props.channelName);
   }
 
   public componentDidUpdate(prevProps: MessageFeedProps) {
     if (prevProps.channelName !== this.props.channelName) {
       this.fetchMessages(this.props.channelName);
     }
-  }
+  }  
 }
 

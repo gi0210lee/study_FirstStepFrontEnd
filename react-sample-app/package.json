@@ -13,6 +13,7 @@
   "dependencies": {
     "ansi-html": "0.0.7",
     "axios": "^0.18.0",
+    "promise": "^8.0.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router": "^4.2.0",

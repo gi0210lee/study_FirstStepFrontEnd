@@ -10,6 +10,11 @@ interface MessageFormState {
   body?: string;
 }
 
+interface MessageFormProps {
+  channelName: string;  
+  setShouldReload: (shouldReload: boolean) => void;
+}
+
 export class MessageForm extends React.Component<MessageFormProps, MessageFormState> {
   constructor(props: MessageFormProps) {
     super(props);
@@ -30,10 +35,15 @@ export class MessageForm extends React.Component<MessageFormProps, MessageFormSt
     event.preventDefault();
     const payload = {
       body: this.state.body,
+      user: {
+        id: '123',
+        name: 'iktahahiro'
+      }
     } as Message;
     postMessage(this.props.channelName, payload)
       .then(() => {
         this.setState({ body: '' });
+        this.props.setShouldReload(true);
       })
       .catch(err => {
         console.log(err);
